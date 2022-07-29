@@ -1,6 +1,59 @@
 #!/bin/bash
 
 
+function requirement {
+
+	clear
+
+	echo "------------------------------------------------------"
+	echo -e "\tPlease Check all requirement"
+	echo "------------------------------------------------------"
+
+	echo "------------->> Check OS Version <<-------------------"
+	cat /etc/os-release
+	echo "   "
+	echo "------------->> Check Kernel Release <<---------------"
+	uname -r
+	echo "   "
+	echo "-------------->> Check Selinux Status <<--------------"
+	sestatus
+	echo "     "
+	echo "-------------->> Check Architecture <<----------------"
+	lscpu | grep Architecture
+	echo "    "
+	echo "--------------->> Check Virtualization <<-------------"
+	lscpu | grep Virtualization
+	if [ $? -ne 0 ]; then
+		echo "Virtualization not enabled.."
+
+	else
+		echo "Virtualization is enabled.."
+	fi
+	echo "   "
+
+	echo "-->> Check Hypervisor vendor and virtualization type <<--"
+        lscpu | grep Hypervisor; lscpu | grep "Virtualization type" 
+	echo "    "
+
+	echo "-------------------------------------------------------"
+	echo -e "\tCheck Partition Scheme"
+	echo "-------------------------------------------------------"
+	df -Th
+
+	echo "      "
+	echo "---------------->> check Disks on Server <<------------"
+	lsblk
+	echo "    "
+
+	echo "------------->> Check Bridge On Server <<--------------"
+	brctl show
+
+
+}
+
+
+
+
 function firewallcheck {
 	clear
 
@@ -69,9 +122,8 @@ function checkvnc {
 		if [ -e  $python2check ]; then
 			echo "Python installed"
 		else
-			echo "Python2 not installed"
-		        echo "Installing Python2"
-			echo "---------------------------------------------"
+			echo "-------------->> Python2 not installed <<-----------------"
+		        echo -e "\tPlease install Python2"
 			
 		fi	
 		echo "Python symlink not exist"
@@ -127,8 +179,9 @@ function menu {
 	clear
 	echo	
 	echo -e "\t\t\tVirtualizor Support Check menu"
-	echo -e "\t1. Check VNC issue"
-	echo -e "\t2. Check Firewall restriction's"
+	echo -e "\t1. Check installation Requirements"
+	echo -e "\t2. Check VNC issue"
+	echo -e "\t3. Check Firewall restriction's"
 	echo -e "\t0. Exit Program\n\n"
 	echo -en "\t\tEnter Option: "
 	read -n 1 option 
@@ -142,8 +195,10 @@ do
 			clear
 			break ;;
 		1)
-			checkvnc ;;
+			requirement ;;
 		2)
+			checkvnc ;;
+		3)
 			clear
 			firewallcheck ;;
 		*)
