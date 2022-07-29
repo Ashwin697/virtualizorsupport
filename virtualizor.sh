@@ -121,17 +121,13 @@ function checkvnc {
 }
 
 
-logged () {
-	clear
-	w
-}
 
 function menu {
 	clear
 	echo	
 	echo -e "\t\t\tVirtualizor Support Check menu"
 	echo -e "\t1. Check VNC issue"
-	echo -e "\t2. Display who logged on user"
+	echo -e "\t2. Check Firewall restriction's"
 	echo -e "\t0. Exit Program\n\n"
 	echo -en "\t\tEnter Option: "
 	read -n 1 option 
@@ -147,7 +143,7 @@ do
 		1)
 			checkvnc ;;
 		2)
-			logged ;;
+			firewallcheck ;;
 		*)
 			clear
 			echo "sorry, wrong selection";;
