@@ -32,7 +32,8 @@ function requirement {
 	echo "   "
 
 	echo "-->> Check Hypervisor vendor and virtualization type <<--"
-        lscpu | grep Hypervisor; lscpu | grep "Virtualization type" 
+        lscpu | grep Hypervisor
+	lscpu | grep "Virtualization type" 
 	echo "    "
 
 	echo "-------------------------------------------------------"
