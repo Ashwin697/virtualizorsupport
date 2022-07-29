@@ -4,6 +4,10 @@
 function firewallcheck {
 	clear
 
+	echo "--------------------------------------------------------"
+	echo -e "\tChecking Firewall restriction's"
+	echo "--------------------------------------------------------"
+
 	inactivestatus=$(service firewalld status |awk '{print $2}'| grep ^inactive)
         if [ "$inactivestatus" == "inactive" ]; then
             echo "firewalld is inactive....."
@@ -37,10 +41,6 @@ function checkvnc {
 	masteronly=$(cat /usr/local/virtualizor/universal.php | grep -m2  novnc | tail -n1 | awk -F= '{print $2}' | awk -F ";" '{print $1}')
         servername=$(cat /usr/local/virtualizor/universal.php | grep  novnc | tail -n1 | awk -F= '{print $2}' | awk -F ";" '{print $1}')
         enablevnc=$(cat /usr/local/virtualizor/universal.php | grep -m1  novnc | awk -F= '{print $2}' | awk -F ";" '{print $1}')
-
-	echo "-----------------------------------------------------------"
-	echo -e "\tChecking Firewall restriction's "
-	echo "----------------------------------------------------------"
 
         firewallcheck
 	echo "         "
@@ -144,6 +144,7 @@ do
 		1)
 			checkvnc ;;
 		2)
+			clear
 			firewallcheck ;;
 		*)
 			clear
