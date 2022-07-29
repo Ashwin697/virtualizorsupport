@@ -179,6 +179,7 @@ function menu {
 	clear
 	echo	
 	echo -e "\t\t\tVirtualizor Support Check menu"
+	echo "     "
 	echo -e "\t1. Check installation Requirements"
 	echo -e "\t2. Check VNC issue"
 	echo -e "\t3. Check Firewall restriction's"
