@@ -2,6 +2,7 @@
 
 
 function firewallcheck {
+	clear
 
 	inactivestatus=$(service firewalld status |awk '{print $2}'| grep ^inactive)
         if [ "$inactivestatus" == "inactive" ]; then
