@@ -14,9 +14,13 @@ function requirement {
 	echo "   "
 	echo "------------->> Check Kernel Release <<---------------"
 	uname -r
+
 	echo "   "
+	if [ -e "/usr/bin/sestatus" ]; then
 	echo "-------------->> Check Selinux Status <<--------------"
 	sestatus
+	fi
+
 	echo "     "
 	echo "-------------->> Check Architecture <<----------------"
 	lscpu | grep Architecture
@@ -31,9 +35,17 @@ function requirement {
 	fi
 	echo "   "
 
-	echo "-->> Check Hypervisor vendor and virtualization type <<--"
-        lscpu | grep Hypervisor
-	lscpu | grep "Virtualization type" 
+        hyper=`lscpu | grep Hypervisor`
+	if [ $? -eq 0 ]; then
+		echo "------------->> Check Hypervisor <<-----------------"
+		lscpu | grep Hypervisor
+	fi
+
+	typevirt=`lscpu | grep "Virtualization type"`
+	if [ $? -eq 0 ]; then
+		echo "--------------->> Check Virtualization type <<--------------"
+		lscpu | grep "Virtualization type"
+	fi
 	echo "    "
 
 	echo "-------------------------------------------------------"
@@ -133,7 +145,7 @@ function checkvnc {
 	echo "-----------------------------------------------------------"
 	ps -aux | grep -E "(websockify -D :4081 --target-config=/usr/local/virtualizor/conf/novnc.vnc --web)"
 	echo "-----------------------------------------------------------"
-	echo "Try to kill websocify once and then start VNC again and check if this work.."
+	echo "Try to kill websocify if it's running on python3 and then start VNC again and check if this work.."
 
 	echo "                "
 	echo "                "
