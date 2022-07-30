@@ -61,31 +61,60 @@ function firewallcheck {
 	echo "--------------------------------------------------------"
 	echo -e "\tChecking Firewall restriction's"
 	echo "--------------------------------------------------------"
+       
 
-	inactivestatus=$(service firewalld status |awk '{print $2}'| grep ^inactive)
-        if [ "$inactivestatus" == "inactive" ]; then
-            echo "firewalld is inactive....."
-	else
-               echo "firewalld is active......"
-	       echo "checking for allowed ports 4081-4085 , 5900-6000 "
-	       portcheck=`firewall-cmd --list-all |grep 5900-6000 | grep 4081-4085`
+       firwalldcheck="/usr/bin/firewall-cmd"
+	if [ -e $firewalldcheck ]; then 
+	        inactivestatus=$(service firewalld status |awk '{print $2}'| grep ^inactive)
+                if [ "$inactivestatus" == "inactive" ]; then
+                        echo "firewalld is inactive....."
+	        else
+                        echo "firewalld is active......"
+	                echo "checking for allowed ports 4081-4085 , 5900-6000 "
+	                portcheck=`firewall-cmd --list-all |grep 5900-6000 | grep 4081-4085`
 
-	         if [ $? -ne 0 ]; then
+	                if [ $? -ne 0 ]; then
 
-			 echo "Port is not allowed for VNC and Panel"
-			 echo "Adding port for VNC and Panel....."
-			 panelport=`firewall-cmd --zone=public --permanent --add-port=4081-4085/tcp`
-                         vncport=`firewall-cmd --zone=public --permanent --add-port=5900-6000/tcp`
-                         reloadf=`firewall-cmd --reload`
-			 echo "Port for VNC and Panel is added to firewall.."
+		        	 echo "Port is not allowed for VNC and Panel"
+			         echo "Adding port for VNC and Panel....."
+			         panelport=`firewall-cmd --zone=public --permanent --add-port=4081-4085/tcp`
+                                 vncport=`firewall-cmd --zone=public --permanent --add-port=5900-6000/tcp`
+                                 reloadf=`firewall-cmd --reload`
+			         echo "Port for VNC and Panel is added to firewall.."
 
-	         else
+	                 else
 
-                     echo "Port is allowed for VNC and Panel..."
-		 fi
+                                 echo "Port is allowed for VNC and Panel..."
+		         fi
+                 fi
+	fi
+ 
 
-		 
-               fi
+
+
+
+
+        iptablecheck="/usr/sbin/iptables"
+	if [ -e $iptablecheck ]; then
+		iprule=`iptables -L | grep 4081:4085`
+		if [ $? -eq 0 ]; then
+			echo "Panel Port Already added to iptables"
+		else
+			echo "Panel Port not added to iptable rule, Adding rules..."
+			iptables -I INPUT 1 -p tcp -m tcp --dport 4081:4085 -j ACCEPT
+			echo "Panel Port Added to iptables rule's"
+		fi
+
+		iprulevnc=`iptables -L | grep 5900:6000`
+		if [ $? -eq 0 ]; then
+			echo "VNC Port already added to iptables"
+		else
+			echo "VNC Port not added to iptable rule, Adding rule....."
+			iptables -I INPUT 2 -p tcp -m tcp --dport 5900:6000 -j ACCEPT
+			echo "VNC Port Added to iptable rule's"
+		fi
+	fi
+
 }
 
 
