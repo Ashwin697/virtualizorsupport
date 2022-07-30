@@ -26,11 +26,12 @@ function requirement {
 	lscpu | grep Architecture
 	echo "    "
 	echo "--------------->> Check Virtualization <<-------------"
-	lscpu | grep Virtualization
+	virtcheck=`lscpu | grep Virtualization`
 	if [ $? -ne 0 ]; then
 		echo "Virtualization not enabled.."
 
 	else
+		lscpu | grep Virtualization
 		echo "Virtualization is enabled.."
 	fi
 	echo "   "
