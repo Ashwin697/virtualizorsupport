@@ -86,9 +86,9 @@ function firewallcheck {
 	if [ -e $firewalldcheck ]; then 
 	        inactivestatus=$(service firewalld status |awk '{print $2}'| grep ^inactive)
                 if [ "$inactivestatus" == "inactive" ]; then
-                        echo "firewalld is inactive....."
+                        echo -e "${red}firewalld is inactive.....${clean}"
 	        else
-                        echo "firewalld is active......"
+                        echo -e  "${green}firewalld is active......${clean}"
 	                echo "checking for allowed ports 4081-4085 , 5900-6000 "
 	                portcheck=`firewall-cmd --list-all |grep 5900-6000 | grep 4081-4085`
 
