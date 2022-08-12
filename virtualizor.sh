@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#color
+
+red='\033[0;31m'
+green='\033[0;32m'
+yellow='\033[0;33m'
+clean='\033[0m'
 
 function requirement {
 
@@ -28,11 +34,11 @@ function requirement {
 	echo "--------------->> Check Virtualization <<-------------"
 	virtcheck=`lscpu | grep Virtualization`
 	if [ $? -ne 0 ]; then
-		echo "Virtualization not enabled.."
+		echo -e "${red}Virtualization not enabled..${clean}"
 
 	else
 		lscpu | grep Virtualization
-		echo "Virtualization is enabled.."
+		echo -e "${green}Virtualization is enabled..${clean}"
 	fi
 	echo "   "
 
@@ -88,16 +94,16 @@ function firewallcheck {
 
 	                if [ $? -ne 0 ]; then
 
-		        	 echo "Port is not allowed for VNC and Panel"
-			         echo "Adding port for VNC and Panel....."
+		        	 echo -e "${red}Port is not allowed for VNC and Panel${clean}"
+			         echo -e "${yellow}Adding port for VNC and Panel.....${clean}"
 			         panelport=`firewall-cmd --zone=public --permanent --add-port=4081-4085/tcp`
                                  vncport=`firewall-cmd --zone=public --permanent --add-port=5900-6000/tcp`
                                  reloadf=`firewall-cmd --reload`
-			         echo "Port for VNC and Panel is added to firewall.."
+			         echo -e "${green}Port for VNC and Panel is added to firewall...${clean}"
 
 	                 else
 
-                                 echo "Port is allowed for VNC and Panel..."
+                                 echo -e "${green}Port is allowed for VNC and Panel...${clean}"
 		         fi
                  fi
 	fi
@@ -108,23 +114,39 @@ function firewallcheck {
 
 
         iptablecheck="/usr/sbin/iptables"
+	echo "   "
+	echo -e "${yellow}Note :: before adding iptable's rule, Please check if any rule exist's or not"
+	echo -e  "\tif not then it's not recommended"
+	echo -e "\tcheck below for existing iptable rule's${clean}"
+	echo "  "
+	echo "-----------------------------------------------"
+	echo -e "\tiptables rule's"
+	echo "-----------------------------------------------"
+	echo "  "
+	iptables -L
+	echo "  "
+	echo "-----------------------------------------------"
 	if [ -e $iptablecheck ]; then
 		iprule=`iptables -L | grep 4081:4085`
 		if [ $? -eq 0 ]; then
-			echo "Panel Port Already added to iptables"
+			echo "  "
+			echo -e "${green}Panel Port Already added to iptables${clean}"
 		else
-			echo "Panel Port not added to iptable rule, Adding rules..."
-			iptables -I INPUT 1 -p tcp -m tcp --dport 4081:4085 -j ACCEPT
-			echo "Panel Port Added to iptables rule's"
+			echo "   "
+			echo -e "${red}Panel Port not added to iptable rule, try this...${clean}"
+			echo -e "----> ${yellow} iptables -I INPUT 1 -p tcp -m tcp --dport 4081:4085 -j ACCEPT${clean}"
+			echo -e "${green}please run this command to add Panel Port on iptables rule's${clean}"
 		fi
 
 		iprulevnc=`iptables -L | grep 5900:6000`
 		if [ $? -eq 0 ]; then
-			echo "VNC Port already added to iptables"
+			echo " "
+			echo -e "${green}VNC Port already added to iptables${clean}"
 		else
-			echo "VNC Port not added to iptable rule, Adding rule....."
-			iptables -I INPUT 2 -p tcp -m tcp --dport 5900:6000 -j ACCEPT
-			echo "VNC Port Added to iptable rule's"
+			echo "  "
+			echo -e "${red}VNC Port not added to iptable rule, try this.....${clean}"
+			echo -e "----> ${yellow} iptables -I INPUT 2 -p tcp -m tcp --dport 5900:6000 -j ACCEPT${clean}"
+			echo -e "${green}please run this command to add VNC Port on iptable rule's${clean}"
 		fi
 	fi
 
@@ -146,7 +168,7 @@ function checkvnc {
 	echo "-----------------------------------------------------------"
 	ps -aux | grep -E "(websockify -D :4081 --target-config=/usr/local/virtualizor/conf/novnc.vnc --web)"
 	echo "-----------------------------------------------------------"
-	echo "Try to kill websocify if it's running on python3 and then start VNC again and check if this work.."
+	echo -e "${yellow}Try to kill websocify if it's running on python3 and then start VNC again and check if this work...${clean}"
 
 	echo "                "
 	echo "                "
@@ -163,16 +185,16 @@ function checkvnc {
 		ls -l /usr/bin/python
 	else
 		if [ -e  $python2check ]; then
-			echo "Python installed"
+			echo -e "${green}Python installed${clean}"
 		else
 			echo "-------------->> Python2 not installed <<-----------------"
-		        echo -e "\tPlease install Python2"
+		        echo -e "\t${yellow}Please install Python2${clean}"
 			
 		fi	
-		echo "Python symlink not exist"
-		echo "Creating symlink for python...."
+		echo -e "${red}Python symlink not exist${clean}"
+		echo -e "${yellow}Creating symlink for python....${clean}"
 		symlinkpython=`ln -sf /usr/bin/python2 /usr/bin/python`
-		echo "symlink created"
+		echo -e  "${green}symlink created${clean}"
 		ls -l /usr/bin/python
 	fi
 	echo "     "
@@ -184,9 +206,9 @@ function checkvnc {
 	echo "    "
 	echo "----------------->> Master Proxy only <<----------------"
 	if [ $masteronly -eq 1 ]; then
-		echo "'Master Proxy only' is enable on Panel"
+		echo -e "${green}'Master Proxy only' is enable on Panel${clean}"
 	else
-		echo "Please enable it from Panel >> Configurations >> Master Settings >> noVNCsettings"
+		echo -e "${yellow}Please enable it from Panel >> Configurations >> Master Settings >> noVNCsettings${clean}"
 		echo "Master Proxy only"
 
 	fi
@@ -194,9 +216,9 @@ function checkvnc {
 	echo "     "
 	echo "----------------->> Use Server Hostname <<-------------"
 	if [ $servername -eq 1 ]; then
-		echo "'Use Server Hostname' is enabled on Panel"
+		echo -e "${green}'Use Server Hostname' is enabled on Panel${clean}"
 	else
-		echo "Please enable it from Panel >> Configurations >> Master Settings >> noVNCsettings"
+		echo -e "${yellow}Please enable it from Panel >> Configurations >> Master Settings >> noVNCsettings${clean}"
 		echo "Use Server Hostname"
 
 	fi
@@ -204,9 +226,9 @@ function checkvnc {
 	echo "   "
         echo "-------------->> Enable noVNC <<-----------------------"
 	if [ $enablevnc -eq 1 ]; then
-		echo "'Enable noVNC' is enabled on Panel"
+		echo -e "${green}'Enable noVNC' is enabled on Panel${clean}"
 	else
-		echo "Please enable it from Panel >> Configurations >> Master Settings >> noVNCsettings"
+		echo -e "${yellow}Please enable it from Panel >> Configurations >> Master Settings >> noVNCsettings${clean}"
 		echo "Enable noVNC"
 	fi
 
@@ -232,30 +254,40 @@ function menu {
 }
 
 if [ "$(id -u)" != "0" ]; then
-   echo "This script must be run as root" 1>&2
+   echo -e "${red}This script must be run as root${clean}" 1>&2
    exit 1
 fi
 
-while true
-do
-	menu
-	case $option in
-		0)
-			clear
-			break ;;
-		1)
-			requirement ;;
-		2)
-			checkvnc ;;
-		3)
-			clear
-			firewallcheck ;;
-		*)
-			clear
-			echo "sorry, wrong selection";;
-		esac
+function main {
 
-		echo -en "\n\n\t\t\tHit any key to continue"
-		read -n 1 line
-	done
+        while true
+        do
+	           menu
+	           case $option in
+		        0)
+			        clear
+			        break ;;
+		        1)
+			        requirement ;;
+	         	2)
+		        	checkvnc ;;
+	        	3)
+		        	clear
+		        	firewallcheck ;;
+	        	*)
+		                clear
+	         		echo "sorry, wrong selection";;
+	        	esac
 
+	        	echo -en "\n\n\t\t\tHit any key to continue"
+	        	read -n 1 line
+        	done
+	}
+
+virtualizorcheck="\usr\local\/virtualizor"
+if [ -d $virtualizorcheck ];then
+	main
+
+else
+	echo -e "${red}Virtualizor is not installed on this system${clean}"
+fi
