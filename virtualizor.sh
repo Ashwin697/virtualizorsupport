@@ -284,7 +284,7 @@ function main {
         	done
 	}
 
-virtualizorcheck="\usr\local\virtualizor"
+virtualizorcheck="/usr/local/virtualizor"
 if [ -d $virtualizorcheck ];then
 	main
 
