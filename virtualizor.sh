@@ -89,7 +89,7 @@ function firewallcheck {
                         echo -e "${red}firewalld is inactive.....${clean}"
 	        else
                         echo -e  "${green}firewalld is active......${clean}"
-	                echo "checking for allowed ports 4081-4085 , 5900-6000 "
+	                echo -e  "${yellow}checking for allowed ports 4081-4085 , 5900-6000${clean} "
 	                portcheck=`firewall-cmd --list-all |grep 5900-6000 | grep 4081-4085`
 
 	                if [ $? -ne 0 ]; then
